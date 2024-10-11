@@ -1,18 +1,16 @@
 import streamlit as st
-from groq import Groq
 import os
+import asyncio
+from groq import AsyncGroq
 
-# Initialize Groq client using your API key (set in your environment variables)
-client = Groq(
-    api_key=os.environ.get("GROQ_API_KEY"),
-)
+# Initialize AsyncGroq client using your API key (set in your environment variables)
+client = AsyncGroq(api_key=os.environ.get("GROQ_API_KEY"))
 
-
-# Function to call Groq API for translation and cultural insights
-def call_groq_api(prompt, language):
+# Asynchronous function to call Groq API for translation and cultural insights
+async def call_groq_api(prompt, language):
     try:
         # Make the Groq API call with the prompt and language
-        chat_completion = client.chat.completions.create(
+        chat_completion = await client.chat.completions.create(
             messages=[
                 {
                     "role": "user",
@@ -33,12 +31,11 @@ def call_groq_api(prompt, language):
             'translation': "Error in translation.",
         }
 
-
-# Function to provide etiquette tips based on region
-def get_etiquette_tips(country):
+# Asynchronous function to provide etiquette tips based on region
+async def get_etiquette_tips(country):
     try:
         # Make the Groq API call with the prompt and language
-        chat_completion = client.chat.completions.create(
+        chat_completion = await client.chat.completions.create(
             messages=[
                 {
                     "role": "user",
@@ -56,9 +53,12 @@ def get_etiquette_tips(country):
 
     except Exception as e:
         return {
-            'translation': "Error in Generating tips.",
+            'tips': "Error in Generating tips.",
         }
 
+# Function to run async tasks
+def run_async(func, *args):
+    return asyncio.run(func(*args))
 
 # UI Styling and Layout
 def build_ui():
@@ -108,17 +108,17 @@ def build_ui():
 
     # Language Selection Dropdown
     target_language = st.selectbox("Select target language:", ["Spanish", "French", "Japanese", "German"])
-    country = st.selectbox("Select Country For Tips:", ["Japan", "Pakistan", "USA", "German", "India", "Egypt", "France", "UAE", "Turkey"])
+    country = st.selectbox("Select Country For Tips:", ["Japan", "Pakistan", "USA", "Germany", "India", "Egypt", "France", "UAE", "Turkey"])
 
     # Generate Insights Button
     if st.button("Generate Insights"):
         if user_input:
             # Call the Groq API with user input and selected language
-            result = call_groq_api(user_input, target_language)
+            result = run_async(call_groq_api, user_input, target_language)
             st.write("### Cultural Insightful Text:")
             st.info(result['translation'])
-            tips = get_etiquette_tips(country)
-            st.write("### Cultural Insightful Text:")
+            tips = run_async(get_etiquette_tips, country)
+            st.write("### Cultural Etiquette Tips:")
             st.info(tips['tips'])
         else:
             st.warning("Please enter some text to generate insights!")
@@ -126,7 +126,6 @@ def build_ui():
     # Footer
     st.markdown("---")
     st.markdown("Powered by **Ahmad Raza** via **AI models**")
-
 
 # Main function to run the app
 if __name__ == "__main__":
