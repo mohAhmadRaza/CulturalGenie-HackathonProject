@@ -1,4 +1,3 @@
-```markdown
 # Culture Genie 🌍
 
 **Culture Genie** is a web application designed to bridge cultures through AI. It provides users with language translation and cultural insights, helping them navigate cross-cultural interactions effectively. Built with Streamlit and the Groq API, Culture Genie aims to foster understanding and respect among diverse cultures.
@@ -99,4 +98,3 @@ For any inquiries, feel free to reach out:
 - **GitHub**: [mohAhmadRaza](https://github.com/mohAhmadRaza)
 
 Thank you for checking out Culture Genie! 🌏
-```
